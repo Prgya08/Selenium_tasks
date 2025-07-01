@@ -7,7 +7,6 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-# Set up Chrome driver with options
 options = Options()
 options.add_argument("--start-maximized")
 driver = webdriver.Chrome(options=options)
@@ -16,26 +15,21 @@ try:
     driver.get("https://www.amazon.in")
     time.sleep(2)
 
-    # Search for laptops
     search_box = driver.find_element(By.ID, "twotabsearchtextbox")
     search_box.send_keys("laptops")
     search_box.send_keys(Keys.RETURN)
 
-    # Wait for product listings to load
     WebDriverWait(driver, 10).until(
         EC.presence_of_all_elements_located((By.CSS_SELECTOR, "span.a-size-medium"))
     )
 
-    # Scroll down to load more products
     for _ in range(5):
         driver.execute_script("window.scrollBy(0, 1000);")
         time.sleep(2)
 
-    # Get all product name elements
     product_elements = driver.find_elements(By.CSS_SELECTOR, "span.a-size-medium.a-color-base.a-text-normal")
     product_names = [el.text.strip() for el in product_elements if el.text.strip()]
 
-    # Save to CSV
     with open("amazon_products.csv", "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerow(["Product Name"])
